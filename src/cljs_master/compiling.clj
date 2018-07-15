@@ -19,25 +19,39 @@
 ;; -----------------------------------------------------------------------------
 ;; Exercise 1:
 ;;
-;; We would like to compile cenv in a different namespace. What do you think
-;; we have to change? Examine ana/empty-env to get a clue.
+;; We would like to compile expr in a different namespace. What do you think we have
+;; to change? Examine ana/empty-env to get a clue.
+
+(comment
+
+  (:ns aenv)
+  (let [aenv (assoc aenv :ns {:name 'foo.core})]
+    (env/with-compiler-env cenv
+      (comp/emit
+       (ana/analyze-form aenv a-defn nil nil))))
+
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Exercise 2:
 
 (def a-type '(deftype A []))
 
-(comment
-
-  (env/with-compiler-env cenv
-    (comp/emit
-      (ana/analyze-form aenv a-type nil nil)))
-
-  )
-
 ;; What does deftype compile to? Unfortunately we get a warning? What's your
 ;; hypothesis about this warning? Have we analyzed core? If not how can
 ;; we analyze it before we analyze our form?
+
+(comment
+
+  (let [aenv (assoc aenv :ns {:name 'foo.core})
+        a-type '(deftype A [x y])]
+    (env/with-compiler-env cenv
+      (comp/with-core-cljs {}
+        (fn []
+          (comp/emit
+           (ana/analyze-form aenv a-type nil nil))))))
+
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Exercise 3:

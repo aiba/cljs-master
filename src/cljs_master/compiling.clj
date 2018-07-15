@@ -62,7 +62,7 @@
 
   (env/with-compiler-env cenv
     (comp/emit
-      (ana/analyze-form aenv a-defn-2 nil nil)))
+     (ana/analyze-form aenv a-defn-2 nil nil)))
 
   )
 
@@ -77,8 +77,12 @@
 
 (comment
 
-  (env/with-compiler-env cenv
-    (comp/emit (ana/analyze-form aenv a-proto nil nil)))
+  (binding [ana/*unchecked-if* false]
+    (env/with-compiler-env cenv
+      (comp/with-core-cljs {}
+        (fn []
+          (comp/emit
+           (ana/analyze-form aenv a-proto nil nil))))))
 
   )
 

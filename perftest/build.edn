@@ -1,0 +1,7 @@
+{:main          fn-test.core
+ :output-to     "out/main.js"
+ :output-dir    "out"
+ :optimizations :simple
+ :pseudo-names  true
+ :static-fns    true      ;; default for :advanced
+ :pretty-print  true}

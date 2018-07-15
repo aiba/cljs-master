@@ -131,3 +131,11 @@
 
 
 (def a-list-source-logging "(defn foo [a b] (+ a b))")
+
+
+;; —————————————————————————————————————————————————————————————————————————————————
+
+(defn file-forms [f-or-path]
+  (let [f (io/file f-or-path)]
+    (-> (io/reader f)
+        (forms-seq (.getName f)))))

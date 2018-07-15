@@ -95,3 +95,19 @@
 ;; Write a function that uses your code from cljs-master.reading and
 ;; cljs-master.analyzing that will take a file and create an output file of the
 ;; compiled JavaScript.
+
+(require '[cljs-master.reading :as reading])
+(require '[cljs-master.analyzing :as analyzing])
+
+(defn compile! [inf outf]
+  (env/with-compiler-env (env/default-compiler-env)
+    (let [aenv (ana/empty-env)]
+      (for [f (reading/file-forms inf)]
+        (ana/analyze-form aenv f nil nil)))))
+
+(comment
+
+  (compile! "/tmp/test.clj"
+            "/tmp/test.js")
+
+  )

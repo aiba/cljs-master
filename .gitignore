@@ -4,3 +4,5 @@
 /.lein*
 /.nrepl-port
 /target
+/out
+/.cpcache

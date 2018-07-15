@@ -58,6 +58,32 @@
 
 (def a-list-alias "(foo ::a/bar baz) (1 [2] {3 #{}})")
 
+(comment
+  (forms-seq a-list-alias)
+  (cljs.analyzer/forms-seq*)
+  )
+
+(defn forms-seq
+  "Given a reader return a lazy sequence of read forms."
+  [^Reader rdr, & [^String file-name]]
+  (let [eof-sentinel (Object.)
+        opts         {:eof eof-sentinel}
+        pbr          (readers/indexing-push-back-reader
+                      (PushbackReader. rdr) 1 (or file-name
+                                                  "<no-filename>"))
+        forms-seq*   (fn forms-seq* []
+                       (lazy-seq
+                        (let [form (binding [*ns* (create-ns ana/*cljs-ns*)
+                                             reader/*alias-map* identity]
+                                     (reader/read opts pbr))]
+                          (if (identical? form eof-sentinel)
+                            (.close rdr)
+                            (cons form (forms-seq*))))))]
+    (forms-seq*)))
+
+(comment
+  (forms-seq (StringReader. a-list-alias))
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Exercise 3:

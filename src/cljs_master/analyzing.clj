@@ -5,13 +5,14 @@
 
 (def aenv (ana/empty-env))
 
-(def a-form '[1])
+(def a-form [1])
 
 (comment
 
-  (pprint
-    (env/with-compiler-env (env/default-compiler-env)
-      (ana/analyze-form aenv a-form nil nil)))
+  aenv
+
+  (env/with-compiler-env (env/default-compiler-env)
+    (ana/analyze-form aenv a-form nil nil))
 
   )
 
@@ -20,9 +21,8 @@
 
 (comment
 
-  (pprint
-    (env/with-compiler-env cenv
-      (ana/analyze-form aenv a-def nil nil)))
+  (env/with-compiler-env cenv
+    (ana/analyze-form aenv a-def nil nil))
 
   (keys (get-in @cenv [::ana/namespaces]))
 
@@ -31,19 +31,33 @@
 ;; -----------------------------------------------------------------------------
 ;; Exercise 1:
 ;;
-;; Lookup x in ::ana/namespaces.
+;; Lookup foo in ::ana/namespaces.
+
+(comment
+  (env/with-compiler-env cenv
+    (ana/analyze-form aenv a-def nil nil))
+
+  (get-in @cenv [::ana/namespaces 'cljs.user :defs 'foo])
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Exercise 2:
 
 (def a-defn '(defn foo [a b] (+ a b)))
 
-;; Lookup a a-defn in ::ana/namespaces. How is it different from x?
+;; Lookup foo in ::ana/namespaces. How is it different from x?
+
+(comment
+  (env/with-compiler-env cenv
+    (ana/analyze-form aenv a-defn nil nil))
+
+  (get-in @cenv [::ana/namespaces 'cljs.user :defs 'foo])
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Exercise 3:
 
-(def a-defn-2 '(defn foo [a b] (+ a x)))
+(def a-defn-2 '(defn foo [a b] (+ a y)))
 
 ;; Analyze a-defn-2. What happens? Why? Where in the analyzer does resolution
 ;; happen?
@@ -54,6 +68,9 @@
     (env/with-compiler-env cenv
       (ana/analyze-form aenv a-defn-2 nil nil)
       nil))
+
+  (keys @cenv)
+  (get-in @cenv [::ana/namespaces 'cljs.user :defs])
 
   )
 
@@ -100,4 +117,3 @@
         (analyze-seq aenv a-defn nil nil))))
 
   )
-
